@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engine6.0 Executor</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+      cursor: crosshair;
+      font-family: 'Orbitron', sans-serif;
+      color: white;
+    }
+
+    #background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    #content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 3em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #9b00ff;
+    }
+
+    .buy-button {
+      margin-top: 20px;
+      padding: 15px 30px;
+      background: #9b00ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background 0.3s;
+      text-decoration: none;
+    }
+
+    .buy-button:hover {
+      background: #7700cc;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="background"></canvas>
+<div id="content">
+  <div class="title">Engine6.0 Executor</div>
+  <a href="https://discord.gg/HeECjfNs" class="buy-button" target="_blank">Buy Now</a>
+</div>
+
+<script>
+// Lines across the entire background
+const canvas = document.getElementById('background');
+const ctx = canvas.getContext('2d');
+let width = window.innerWidth;
+let height = window.innerHeight;
+canvas.width = width;
+canvas.height = height;
+
+let dots = [];
+const DOTS_AMOUNT_X = 30;
+const DOTS_AMOUNT_Y = 20;
+
+for (let y = 0; y <= DOTS_AMOUNT_Y; y++) {
+  for (let x = 0; x <= DOTS_AMOUNT_X; x++) {
+    dots.push({
+      x: x * (width / DOTS_AMOUNT_X),
+      y: y * (height / DOTS_AMOUNT_Y),
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5
+    });
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, width, height);
+
+  // Draw lines
+  for (let i = 0; i < dots.length; i++) {
+    for (let j = 0; j < dots.length; j++) {
+      if (Math.abs(dots[i].x - dots[j].x) < width / DOTS_AMOUNT_X + 10 && Math.abs(dots[i].y - dots[j].y) < height / DOTS_AMOUNT_Y + 10) {
+        ctx.beginPath();
+        ctx.moveTo(dots[i].x, dots[i].y);
+        ctx.lineTo(dots[j].x, dots[j].y);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Draw dots
+  for (let i = 0; i < dots.length; i++) {
+    ctx.beginPath();
+    ctx.arc(dots[i].x, dots[i].y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+  }
+
+  move();
+  requestAnimationFrame(draw);
+}
+
+function move() {
+  for (let i = 0; i < dots.length; i++) {
+    dots[i].x += dots[i].vx;
+    dots[i].y += dots[i].vy;
+
+    if (dots[i].x < 0 || dots[i].x > width) dots[i].vx *= -1;
+    if (dots[i].y < 0 || dots[i].y > height) dots[i].vy *= -1;
+  }
+}
+
+window.addEventListener('resize', () => {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+});
+
+draw();
+</script>
+
+</body>
+</html>
